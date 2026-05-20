@@ -20,7 +20,24 @@ frontend_origins = [
     if origin.strip()
 ]
 
-CORS(app, resources={r"/upload": {"origins": frontend_origins}})
+CORS(
+    app,
+    resources={r"/upload": {"origins": frontend_origins}},
+    allow_headers=["Content-Type", "X-Owner-Token"],
+)
+
+
+def _require_owner_token():
+    expected_token = os.getenv("OWNER_UPLOAD_TOKEN", "")
+    provided_token = request.headers.get("X-Owner-Token", "")
+
+    if not expected_token:
+        return _error("Owner upload token is not configured.", 500)
+
+    if provided_token != expected_token:
+        return _error("Unauthorized upload request.", 401)
+
+    return None
 
 
 def _error(message: str, status_code: int, **extra: Any):
@@ -36,6 +53,10 @@ def health():
 
 @app.post("/upload")
 def upload_image():
+    token_error = _require_owner_token()
+    if token_error:
+        return token_error
+
     if "image" not in request.files:
         return _error("No image file was provided.", 400)
 
