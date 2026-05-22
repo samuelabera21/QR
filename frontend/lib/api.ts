@@ -6,11 +6,19 @@ export const api = axios.create({
     "Content-Type": "multipart/form-data",
   },
 });
-
 export async function uploadImage(file: File): Promise<string> {
   const formData = new FormData();
   formData.append("image", file);
 
-  const response = await api.post<{ imageUrl: string }>("/upload", formData);
-  return response.data.imageUrl;
+  try {
+    const response = await api.post<{ imageUrl: string }>("/upload", formData);
+    return response.data.imageUrl;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      const message = error.response?.data?.error || error.message || "Upload failed.";
+      throw new Error(message);
+    }
+
+    throw error;
+  }
 }
