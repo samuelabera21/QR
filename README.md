@@ -12,7 +12,7 @@ A production-style full stack QR image sharing app.
 
 ## Tech Stack
 
-- Frontend: Next.js 15, TypeScript, Tailwind CSS, Axios, Framer Motion, lucide-react, react-qrcode-logo
+- Frontend: Next.js 15, TypeScript, Tailwind CSS, Axios, Framer Motion, lucide-react, qrcode
 - Backend: Flask, Flask-CORS, Cloudinary Python SDK, Pillow, qrcode, python-dotenv
 
 ## Project Structure
